@@ -2,6 +2,7 @@ package com.forumhub.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Entity
 public class Topic {
@@ -11,71 +12,61 @@ public class Topic {
 
     private String title;
     private String message;
-    private Long authorId;
-    private Long courseId;
-    private Timestamp createdAt;
+    private String status;
+    private Timestamp creationDate;
+
+    @ManyToOne
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
+
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL)
+    private Set<Answer> answers;
 
     public Topic() {
-        this.createdAt = new Timestamp(System.currentTimeMillis());
+        this.creationDate = new Timestamp(System.currentTimeMillis());
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public String getStatus() {
+        return status;
     }
 
-    public Long getAuthorId() {
-        return authorId;
+    public Timestamp getCreationDate() {
+        return creationDate;
     }
 
-    public void setAuthorId(Long authorId) {
-        this.authorId = authorId;
+    public User getAuthor() {
+        return author;
     }
 
-    public Long getCourseId() {
-        return courseId;
+    public Course getCourse() {
+        return course;
     }
 
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
+    public Set<Answer> getAnswers() {
+        return answers;
     }
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Topic{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", message='" + message + '\'' +
-                ", authorId=" + getAuthorId() +
-                ", courseId=" + getCourseId() +
-                ", createdAt=" + createdAt +
-                '}';
+    public void setCourse(Course course) {
+        this.course = course;
     }
 }
