@@ -27,8 +27,6 @@ public class User {
     @JoinColumn(name = "user_id") // Cria uma coluna `user_id` na tabela `profiles`
     private List<Profile> profiles;
 
-    // Getters e Setters
-
     public Long getId() {
         return id;
     }

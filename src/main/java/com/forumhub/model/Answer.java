@@ -1,47 +1,62 @@
 package com.forumhub.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 @Entity
 public class Answer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String message;
-    private Timestamp creationDate;
-    private Boolean solution;
+    private boolean isSolution;
 
     @ManyToOne
-    @JoinColumn(name = "topic_id", nullable = false)
-    private Topic topic;
-
-    @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "user_id")
     private User author;
 
-    public Answer() {
-        this.creationDate = new Timestamp(System.currentTimeMillis());
-    }
+    @ManyToOne
+    @JoinColumn(name = "topic_id")
+    private Topic topic;
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public Timestamp getCreationDate() {
-        return creationDate;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public boolean isSolution() {
+        return isSolution;
+    }
+
+    public void setSolution(boolean solution) {
+        isSolution = solution;
     }
 
     public Topic getTopic() {
         return topic;
     }
 
-    public User getAuthor() {
-        return author;
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 }

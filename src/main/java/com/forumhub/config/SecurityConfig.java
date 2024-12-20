@@ -9,7 +9,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()  // Desabilitar CSRF para testes
+        http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/forumhub/users").permitAll()  // Permitir acesso sem autenticação para esse endpoint
                 .anyRequest().authenticated()  // Requer autenticação para os outros endpoints
