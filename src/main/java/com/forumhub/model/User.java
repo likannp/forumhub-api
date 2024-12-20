@@ -1,27 +1,40 @@
 package com.forumhub.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime createdAt;
+
     private String username;
     private String email;
     private String password;
 
-    @OneToMany(mappedBy = "author")
-    private Set<Topic> topics; // Relacionamento para que um usuário possa ter vários tópicos.
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id") // Cria uma coluna `user_id` na tabela `profiles`
+    private List<Profile> profiles;
 
-    @OneToMany(mappedBy = "author")
-    private Set<Answer> answers; // Respostas feitas pelos usuários.
+    // Getters e Setters
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -48,20 +61,11 @@ public class User {
         this.password = password;
     }
 
-    public Set<Topic> getTopics() {
-        return topics;
+    public List<Profile> getProfiles() {
+        return profiles;
     }
 
-    public Set<Answer> getAnswers() {
-        return answers;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public void setProfiles(List<Profile> profiles) {
+        this.profiles = profiles;
     }
 }

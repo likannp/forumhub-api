@@ -1,9 +1,11 @@
 package com.forumhub.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Course {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -11,27 +13,8 @@ public class Course {
     private String name;
     private String category;
 
-    public Long getId() {
-        return id;
-    }
+    @OneToMany(mappedBy = "course")
+    private List<Topic> topics;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
+    // Getters and Setters
 }
