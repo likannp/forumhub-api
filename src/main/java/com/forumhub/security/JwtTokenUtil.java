@@ -3,7 +3,6 @@ package com.forumhub.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-
 import java.util.Date;
 
 public class JwtTokenUtil {
@@ -21,10 +20,10 @@ public class JwtTokenUtil {
     }
 
     public static String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
     }
 }
