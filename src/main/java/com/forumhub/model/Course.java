@@ -1,15 +1,20 @@
 package com.forumhub.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Course {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
     private String category;
+
+    @OneToMany(mappedBy = "course")
+    private List<Topic> topics;
 
     public Long getId() {
         return id;
@@ -33,5 +38,13 @@ public class Course {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public List<Topic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<Topic> topics) {
+        this.topics = topics;
     }
 }

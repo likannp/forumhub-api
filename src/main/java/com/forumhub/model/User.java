@@ -1,27 +1,46 @@
 package com.forumhub.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
     private String username;
     private String email;
     private String password;
 
-    @OneToMany(mappedBy = "author")
-    private Set<Topic> topics; // Relacionamento para que um usuário possa ter vários tópicos.
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id") // Cria uma coluna `user_id` na tabela `profiles`
+    private List<Profile> profiles;
 
-    @OneToMany(mappedBy = "author")
-    private Set<Answer> answers; // Respostas feitas pelos usuários.
+    @JsonIgnore  // Ignora este campo no JSON (não é necessário no banco de dados)
+    public String getFormattedCreatedAt() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        return createdAt.format(formatter);
+    }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -48,20 +67,11 @@ public class User {
         this.password = password;
     }
 
-    public Set<Topic> getTopics() {
-        return topics;
+    public List<Profile> getProfiles() {
+        return profiles;
     }
 
-    public Set<Answer> getAnswers() {
-        return answers;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public void setProfiles(List<Profile> profiles) {
+        this.profiles = profiles;
     }
 }
