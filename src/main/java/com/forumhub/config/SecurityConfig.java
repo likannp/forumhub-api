@@ -12,7 +12,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/forumhub/users").permitAll()  // Permitir acesso sem autenticação para esse endpoint
-                .anyRequest().authenticated()  // Requer autenticação para os outros endpoints
+                .antMatchers("/forumhub/auth/login").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint((request, response, authException) ->

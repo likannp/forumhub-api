@@ -1,10 +1,12 @@
 package com.forumhub.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity
@@ -16,7 +18,7 @@ public class User {
     private Long id;
 
     @CreationTimestamp
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     private String username;
@@ -26,6 +28,12 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id") // Cria uma coluna `user_id` na tabela `profiles`
     private List<Profile> profiles;
+
+    @JsonIgnore  // Ignora este campo no JSON (não é necessário no banco de dados)
+    public String getFormattedCreatedAt() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        return createdAt.format(formatter);
+    }
 
     public Long getId() {
         return id;
