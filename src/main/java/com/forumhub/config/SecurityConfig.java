@@ -18,6 +18,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/forumhub/users").permitAll()
                 .antMatchers("/forumhub/auth/login").permitAll()
                 .antMatchers("/forumhub/courses").authenticated()
+                .antMatchers("/forumhub/topics").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
