@@ -1,0 +1,377 @@
+{
+	"info": {
+		"_postman_id": "63aa947c-f199-4052-b58e-942708441614",
+		"name": "forumhub",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "11299459"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 500\", function () {\r",
+							"  pm.expect(pm.response.code).to.equal(500);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response has the required fields - timestamp, status, error, and path\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData.timestamp).to.exist;\r",
+							"    pm.expect(responseData.status).to.exist;\r",
+							"    pm.expect(responseData.error).to.exist;\r",
+							"    pm.expect(responseData.path).to.exist;\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Timestamp is in a valid format\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData.timestamp).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$/, \"Timestamp format is not valid\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"// Add a test to check the length of the response data\r",
+							"pm.test(\"Response data length is greater than zero\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    const keys = Object.keys(responseData);\r",
+							"    \r",
+							"    pm.expect(keys.length).to.be.greaterThan(0, \"Response data should not be empty\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"testeCurso\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/forumhub/auth/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Criar Curso",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Teste: Verifica se o código de status da resposta é 403\r",
+							"pm.test(\"Response status code is 403\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(403);\r",
+							"});\r",
+							"\r",
+							"// Teste: Verifica se o tempo de resposta está dentro de um limite aceitável\r",
+							"pm.test(\"Response time is within an acceptable range\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"// Teste: Verifica se o cabeçalho Content-Type está presente e é \"application/json\"\r",
+							"pm.test(\"Response has the required Content-Type header\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"// Teste: Verifica se o corpo da resposta é um objeto JSON\r",
+							"pm.test(\"Response body should be in JSON format\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"});\r",
+							"\r",
+							"// Teste adicional: Verifica a presença de erro na resposta\r",
+							"pm.test(\"Response contains error message\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"error\");\r",
+							"    pm.expect(jsonData.error).to.equal(\"Full authentication is required to access this resource\");\r",
+							"});\r",
+							"\r",
+							"// Teste adicional: Verifica se o erro tem uma mensagem apropriada\r",
+							"pm.test(\"Error message should explain authentication issue\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.error).to.match(/authentication/i);  // Verifica se a mensagem contém \"authentication\"\r",
+							"});\r",
+							"\r",
+							"// Visualizer para exibir o erro de maneira formatada na interface do Postman\r",
+							"var template = `\r",
+							"<style type=\"text/css\">\r",
+							"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+							"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+							"    .tftable tr {background-color:#ffffff;}\r",
+							"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+							"    .tftable tr:hover {background-color:#e0ffff;}\r",
+							"</style>\r",
+							"\r",
+							"<table class=\"tftable\" border=\"1\">\r",
+							"    <tr>\r",
+							"        <th>Error</th>\r",
+							"    </tr>\r",
+							"    <tr>\r",
+							"        <td>{{response.error}}</td>\r",
+							"    </tr>\r",
+							"</table>\r",
+							"`;\r",
+							"\r",
+							"function constructVisualizerPayload() {\r",
+							"    return { response: pm.response.json() }\r",
+							"}\r",
+							"\r",
+							"pm.visualizer.set(template, constructVisualizerPayload());\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": ""
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Spring Caixa\",\r\n    \"category\": \"Programming\",\r\n    \"topics\": []\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/forumhub/courses"
+			},
+			"response": []
+		},
+		{
+			"name": "Criar Tópico",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": ""
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Tópico Curso\",\r\n  \"message\": \"Este é um tópico de exemplo\",\r\n  \"status\": \"open\",\r\n  \"course\": {\r\n    \"id\": 3\r\n  },\r\n  \"author\": {\r\n    \"id\": 13\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/forumhub/topics"
+			},
+			"response": []
+		},
+		{
+			"name": "Acessar Tópico por ID",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": ""
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/forumhub/topics/{id}/summary"
+			},
+			"response": []
+		},
+		{
+			"name": "Criar Usuario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 500\", function () {\r",
+							"  pm.expect(pm.response.code).to.equal(500);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response has the required fields - timestamp, status, error, and path\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData.timestamp).to.exist;\r",
+							"    pm.expect(responseData.status).to.exist;\r",
+							"    pm.expect(responseData.error).to.exist;\r",
+							"    pm.expect(responseData.path).to.exist;\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Timestamp is in a valid date format\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.timestamp).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}[+-]\\d{2}:\\d{2}$/);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Content type is application/json\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"testeCurso\",\r\n  \"email\": \"testeCurso@example.com\",\r\n  \"password\": \"123456\",\r\n  \"profiles\": []\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/forumhub/users"
+			},
+			"response": []
+		},
+		{
+			"name": "Deletar Tópico",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": ""
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:8080/forumhub/topics/{id}"
+			},
+			"response": []
+		},
+		{
+			"name": "Atualizar Tópico",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": ""
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"message\": \"Atualizar\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/forumhub/topics/{id}"
+			},
+			"response": []
+		},
+		{
+			"name": "Listar Tópicos",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": ""
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/forumhub/topics"
+			},
+			"response": []
+		},
+		{
+			"name": "Listar Tópicos relacionado ao curso",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": ""
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/forumhub/topics/course/{id}"
+			},
+			"response": []
+		},
+		{
+			"name": "Criar uma resposta",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": ""
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"message\": \"Mais uma resposta para o tópico ser testado.\",\r\n  \"isSolution\": false,\r\n  \"author\": {\r\n    \"id\": \r\n  },\r\n  \"topic\": {\r\n    \"id\":\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/forumhub/answers"
+			},
+			"response": []
+		}
+	]
+}
