@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -66,4 +67,98 @@ public class TopicController {
 
         return ResponseEntity.ok(responseDTO);
     }
+
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<TopicDTO.TopicSummaryDTO> getTopicSummary(@PathVariable Long id) {
+        // Buscar o tópico pelo ID
+        Optional<Topic> topicOpt = topicRepository.findById(id);
+
+        if (!topicOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Topic topic = topicOpt.get();
+        TopicDTO.TopicSummaryDTO summaryDTO = new TopicDTO.TopicSummaryDTO();
+        summaryDTO.setTitle(topic.getTitle());
+        summaryDTO.setMessage(topic.getMessage());
+
+        return ResponseEntity.ok(summaryDTO);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTopic(@PathVariable Long id) {
+        Optional<Topic> topicOpt = topicRepository.findById(id);
+
+        if (!topicOpt.isPresent()) {
+            return ResponseEntity.status(404).body("Tópico não encontrado.");
+        }
+
+        topicRepository.deleteById(id);
+
+        return ResponseEntity.ok("Tópico excluído com sucesso.");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateTopic(@PathVariable Long id, @RequestBody Topic updatedTopic) {
+        Optional<Topic> topicOpt = topicRepository.findById(id);
+
+        if (!topicOpt.isPresent()) {
+            return ResponseEntity.status(404).body("Tópico não encontrado.");
+        }
+
+        Topic existingTopic = topicOpt.get();
+
+        // Atualizar título e mensagem, caso fornecidos
+        if (updatedTopic.getTitle() != null) {
+            existingTopic.setTitle(updatedTopic.getTitle());
+        }
+        if (updatedTopic.getMessage() != null) {
+            existingTopic.setMessage(updatedTopic.getMessage());
+        }
+
+        // Atualizar curso, caso fornecido
+        if (updatedTopic.getCourse() != null) {
+            Optional<Course> courseOpt = courseRepository.findById(updatedTopic.getCourse().getId());
+            if (!courseOpt.isPresent()) {
+                return ResponseEntity.badRequest().body("Curso especificado não encontrado.");
+            }
+            existingTopic.setCourse(courseOpt.get());
+        }
+
+        // Atualizar status, caso fornecido
+        if (updatedTopic.getStatus() != null) {
+            existingTopic.setStatus(updatedTopic.getStatus());
+        }
+
+        topicRepository.save(existingTopic);
+
+        return ResponseEntity.ok("Tópico atualizado com sucesso.");
+    }
+    @GetMapping
+    public ResponseEntity<List<TopicDTO>> listAllTopics() {
+        List<Topic> topics = topicRepository.findAll();
+
+        List<TopicDTO> topicDTOs = topics.stream().map(topic -> {
+            TopicDTO dto = new TopicDTO();
+            dto.setTitle(topic.getTitle());
+            dto.setMessage(topic.getMessage());
+            dto.setStatus(topic.getStatus());
+
+            TopicDTO.CourseDTO courseDTO = new TopicDTO.CourseDTO();
+            courseDTO.setId(topic.getCourse().getId());
+            courseDTO.setName(topic.getCourse().getName());
+            courseDTO.setCategory(topic.getCourse().getCategory());
+            dto.setCourse(courseDTO);
+
+            TopicDTO.UserDTO userDTO = new TopicDTO.UserDTO();
+            userDTO.setId(topic.getAuthor().getId());
+            userDTO.setUsername(topic.getAuthor().getUsername());
+            userDTO.setEmail(topic.getAuthor().getEmail());
+            dto.setAuthor(userDTO);
+
+            return dto;
+        }).toList();
+
+        return ResponseEntity.ok(topicDTOs);
+    }
+
 }
