@@ -1,5 +1,7 @@
 package com.forumhub.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class Topic {
     private User author;
 
 
+    @JsonIgnore
     @OneToMany(mappedBy = "topic")
     private List<Answer> answers;
 

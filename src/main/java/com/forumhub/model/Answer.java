@@ -1,5 +1,7 @@
 package com.forumhub.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -16,6 +18,7 @@ public class Answer {
     @JoinColumn(name = "user_id")
     private User author;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "topic_id")
     private Topic topic;
