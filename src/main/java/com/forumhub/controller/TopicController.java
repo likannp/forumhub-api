@@ -7,6 +7,7 @@ import com.forumhub.repository.TopicRepository;
 import com.forumhub.repository.CourseRepository;
 import com.forumhub.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -136,6 +137,38 @@ public class TopicController {
     @GetMapping
     public ResponseEntity<List<TopicDTO>> listAllTopics() {
         List<Topic> topics = topicRepository.findAll();
+
+        List<TopicDTO> topicDTOs = topics.stream().map(topic -> {
+            TopicDTO dto = new TopicDTO();
+            dto.setTitle(topic.getTitle());
+            dto.setMessage(topic.getMessage());
+            dto.setStatus(topic.getStatus());
+
+            TopicDTO.CourseDTO courseDTO = new TopicDTO.CourseDTO();
+            courseDTO.setId(topic.getCourse().getId());
+            courseDTO.setName(topic.getCourse().getName());
+            courseDTO.setCategory(topic.getCourse().getCategory());
+            dto.setCourse(courseDTO);
+
+            TopicDTO.UserDTO userDTO = new TopicDTO.UserDTO();
+            userDTO.setId(topic.getAuthor().getId());
+            userDTO.setUsername(topic.getAuthor().getUsername());
+            userDTO.setEmail(topic.getAuthor().getEmail());
+            dto.setAuthor(userDTO);
+
+            return dto;
+        }).toList();
+
+        return ResponseEntity.ok(topicDTOs);
+    }
+    @GetMapping("/course/{courseId}")
+    public ResponseEntity<List<TopicDTO>> getTopicsByCourse(@PathVariable Long courseId) {
+        Optional<Course> courseOpt = courseRepository.findById(courseId);
+        if (!courseOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        List<Topic> topics = topicRepository.findByCourseId(courseId);
 
         List<TopicDTO> topicDTOs = topics.stream().map(topic -> {
             TopicDTO dto = new TopicDTO();
